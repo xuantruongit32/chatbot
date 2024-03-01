@@ -2,7 +2,7 @@ import 'package:chatbot/messages.dart';
 import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Bot Bot',
       theme: ThemeData(brightness: Brightness.dark),
-      home: Home(),
+      home: const Home(),
     );
   }
 }
@@ -37,43 +37,46 @@ class _HomeState extends State<Home> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bot Bot'),
+        title: const Text('Bot Bot'),
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Expanded(child: Messager(messages: messages)),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              color: Colors.deepPurple,
-              child: Row(
-                children: [
-                  Expanded(
-                      child: TextField(
-                    controller: _controller,
-                    style: TextStyle(color: Colors.white),
-                  )),
-                  IconButton(
-                      onPressed: () {
-                        sendMessage(_controller.text);
-                        _controller.clear();
-                      },
-                      icon: Icon(Icons.send))
-                ],
-              ),
-            )
-          ],
-        ),
+      body: Column(
+        children: [
+          Expanded(child: Messager(messages: messages)),
+          Container(
+            padding: const EdgeInsets.only(left: 20),
+            color: Colors.deepPurple,
+            child: Row(
+              children: [
+                Expanded(
+                    child: TextField(
+                  controller: _controller,
+                  style: const TextStyle(color: Colors.white),
+                )),
+                IconButton(
+                    onPressed: () {
+                      sendMessage(_controller.text);
+                      _controller.clear();
+                    },
+                    icon: const Icon(Icons.send))
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
 
   sendMessage(String text) async {
     if (text.isEmpty) {
-      print('Message is empty');
     } else {
       setState(() {
         addMessage(Message(text: DialogText(text: [text])), true);
@@ -84,6 +87,7 @@ class _HomeState extends State<Home> {
       if (response.message == null) return;
       setState(() {
         addMessage(response.message!);
+        FocusScope.of(context).unfocus();
       });
     }
   }
